@@ -12,6 +12,13 @@ export function createApp(config: RigConfig = loadConfig()) {
 
   app.get('/health', (c) => c.json({ ok: true, lane: lane().id }));
 
+  app.get('/api/digest/:night', (c) => {
+    const param = c.req.param('night');
+    const night = readNight(config.runsDir, param);
+    if (!night) return c.json({ error: 'no run log', night: param }, 404);
+    return c.json(night);
+  });
+
   app.get('/', (c) =>
     c.html(
       <Layout title="status" lane={lane()}>
